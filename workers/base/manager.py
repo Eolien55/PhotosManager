@@ -46,6 +46,8 @@ class BaseManager(BaseProcess):
 
     def before_start(self):
         self.start_employees()
+        if getattr(self, "handler"):
+            self.handler.start()
 
     def least_used(self):
         """Find employee with the smallest queue and give him the job"""
