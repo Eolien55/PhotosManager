@@ -1,4 +1,4 @@
-from ..baseprocess import BaseProcess
+from .baseprocess import BaseProcess
 
 
 class BaseEmployee:

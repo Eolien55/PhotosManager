@@ -1,7 +1,9 @@
-from photos import photo_employee_job
+from ..photos import photo_employee_job
 import exiftool
 import os
-from base.employee import BaseEmployee
+from os.path import join
+from shutil import move
+from .base.employee import BaseEmployee
 
 
 class ExifEmployee:
@@ -32,8 +34,13 @@ class PhotoEmployee(BaseEmployee):
 
 
 class CleanEmployee(BaseEmployee):
-    def before_loop(self):
-        self.root
+    def __init__(self, root, *args, **kwgs):
+        super().__init__(*args, **kwgs)
+
+        self.root = root
 
     def handle_new_file(self, filename):
-        pass
+        move(
+            filename,
+            join(self.root, os.listdir(self.root)) + "." + filename.split(".")[-1],
+        )

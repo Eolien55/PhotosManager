@@ -1,11 +1,11 @@
 import shutil
 import os
+from types import FunctionType
 import requests
 import json
 import re
 import hachoir.metadata
 import hachoir.parser
-from sys import argv
 
 
 def lonlat(gps):
@@ -72,7 +72,7 @@ def exif_to_city_country(exif: dict):
     return city, country
 
 
-def photo_employee_job(root, filename: str, get_exif: function):
+def photo_employee_job(root, filename: str, get_exif: FunctionType):
     format = filename.split(".")[-1]
     if format.upper() not in authorized_formats:
         return

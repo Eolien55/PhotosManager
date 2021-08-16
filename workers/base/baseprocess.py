@@ -4,6 +4,18 @@ from collections import namedtuple
 Msg = namedtuple("Msg", ["event", "args"])
 
 
+"""class Queue(mp.Queue):
+    \"""Clearable queue\"""
+
+    def clear(self):
+        \"""Function to clear the queue\"""
+        try:
+            while True:
+                self.get_nowait()
+        except Exception:
+            pass"""
+
+
 class BaseProcess(mp.Process):
     """A process backed by an internal queue for one-way message passing"""
 
@@ -36,9 +48,14 @@ class BaseProcess(mp.Process):
 
         while True:
             msg = self.queue.get()
-            if msg == "EOF":
+            if msg == "END":
                 break
             self.dispatch(msg)
+        try:
+            while True:
+                self.queue.get_nowait()
+        except Exception:
+            pass
 
         if getattr(self, "after_loop"):
             self.after_loop()
