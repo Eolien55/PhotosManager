@@ -1,8 +1,12 @@
 import multiprocessing as mp
 from collections import namedtuple
-import os
+
 
 Msg = namedtuple("Msg", ["event", "args"])
+
+
+class BaseProcess:
+    pass
 
 
 class BaseProcess(mp.Process):
@@ -12,6 +16,8 @@ class BaseProcess(mp.Process):
 
     def __init__(self, *args, **kwgs):
         super().__init__(*args, **kwgs)
+
+        self._start = super().start
 
         self.queue = mp.Queue()
 
@@ -37,7 +43,9 @@ class BaseProcess(mp.Process):
 
         while True:
             msg = self.queue.get()
-            if msg == "END":
+            event, _ = msg
+            if event == "END":
+                del event, _
                 break
             self.dispatch(msg)
         try:
@@ -53,18 +61,10 @@ class BaseProcess(mp.Process):
         if hasattr(self, "before_start"):
             self.before_start()
 
-        self._check_closed()
-        assert self._popen is None, "cannot start a process twice"
-        assert (
-            self._parent_pid == os.getpid()
-        ), "can only start a process object created by current process"
-        assert not mp._current_process._config.get(
-            "daemon"
-        ), "daemonic processes are not allowed to have children"
-        mp._cleanup()
-        self._popen = self._Popen(self)
-        self._sentinel = self._popen.sentinel
-        # Avoid a refcycle if the target function holds an indirect
-        # reference to the process object (see bpo-30775)
-        del self._target, self._args, self._kwargs
-        mp._children.add(self)
+        self._start()
+
+    def __lt__(self, other: BaseProcess):
+        return self.queue.qsize() < other.queue.qsize()
+
+    def __gt__(self, other: BaseProcess):
+        return self.queue.qsize() > other.queue.qsize()

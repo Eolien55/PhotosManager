@@ -11,7 +11,7 @@ def main_clean(root):
             manager.send("new_file", os.path.join(os.path.abspath(dirpath), file))
     manager.send("END")
     manager.join()
-    print("Done!")
+    print("Done cleaning!")
 
 
 if __name__ == "__main__":
@@ -19,4 +19,13 @@ if __name__ == "__main__":
         root = os.path.abspath(".")
     else:
         root = os.path.abspath(argv[1])
-    main_clean(root)
+    while (
+        res := input(
+            "THIS WILL BREAK ALL THE ORGANISATION MADE IN {}. ARE YOU OKAY WITH THIS ? [Y/N] ".format(
+                root
+            )
+        ).upper()
+    ) not in ("Y", "N"):
+        pass
+    if res == "Y":
+        main_clean(root)
