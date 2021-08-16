@@ -26,7 +26,7 @@ class BaseManager(BaseProcess):
             if employee._popen is None:
                 employee.start()
 
-    def before_loop(self):
+    def before_start(self):
         self.start_employees()
 
     def least_used(self):
