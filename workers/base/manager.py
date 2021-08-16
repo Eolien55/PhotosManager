@@ -1,6 +1,5 @@
 from .baseprocess import BaseProcess
 from .employee import AnyEmployee
-from multiprocessing import Process
 
 EMPLOYEE_NUMBER = 20
 

@@ -36,12 +36,10 @@ months = {
     "12": "D\u00e9cembre",
 }
 
-authorized_formats = ()
+authorized_formats = ("GIF", "JPG", "JPEG", "PNG", "TIFF", "MOV", "MP4")
 
 
-def exif_to_city_country(exif: dict):
-    gps_exif = {k.split(":")[-1]: v for k, v in exif.items() if "EXIF:" in k}
-    lon, lat = lonlat(gps_exif)
+def lonlat_to_city_country(lon, lat):
     params = {
         "lon": str(lon),
         "lat": str(lat),
@@ -68,6 +66,14 @@ def exif_to_city_country(exif: dict):
     else:
         city = "Ville inconnue"
         country = "Pays inconnu"
+
+    return city, country
+
+
+def exif_to_city_country(exif: dict):
+    gps_exif = {k.split(":")[-1]: v for k, v in exif.items() if "EXIF:" in k}
+    lon, lat = lonlat(gps_exif)
+    city, country = lonlat_to_city_country(lon, lat)
 
     return city, country
 
