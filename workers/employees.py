@@ -23,11 +23,10 @@ class ExifEmployee:
 class PhotoEmployee(BaseEmployee):
     name = "PhotoEmployee"
 
-    def __init__(self, process_id, root, *args, **kwgs):
+    def __init__(self, root, *args, **kwgs):
         super().__init__(*args, **kwgs)
 
         self.root = root
-        self.process_id = process_id
 
     def before_loop(self):
         self.exif_employee = ExifEmployee()
@@ -46,13 +45,12 @@ class PhotoEmployee(BaseEmployee):
 class CleanEmployee(BaseEmployee):
     name = "CleanEmployee"
 
-    def __init__(self, process_id, root, *args, **kwgs):
+    def __init__(self, root, *args, **kwgs):
         super().__init__(*args, **kwgs)
 
         self.root = root
-        self.process_id = process_id
-        if not exists(join(root, str(process_id))):
-            makedirs(join(root, str(process_id)))
+        if not exists(join(root, str(self.process_id))):
+            makedirs(join(root, str(self.process_id)))
 
     def handle_new_file(self, filename):
         move(

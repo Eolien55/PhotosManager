@@ -9,7 +9,6 @@ class BaseManager(BaseProcess):
     name = "Manager"
     target = AnyEmployee
     target_args = 0
-    process_id = False
 
     def __init__(self, *args, **kwgs):
         target_args = args[: self.target_args]
@@ -18,17 +17,13 @@ class BaseManager(BaseProcess):
         super().__init__(*args, **kwgs)
         employees = list()
 
-        if self.target.has_parent:
-            target_args = target_args + [self]
-
-        if self.process_id:
-            counter = 0
-            for _ in range(EMPLOYEE_NUMBER):
-                employees.append(self.target(counter, *target_args, **kwgs))
-                counter += 1
-        else:
-            for _ in range(EMPLOYEE_NUMBER):
-                employees.append(self.target(*target_args, **kwgs))
+        counter = 0
+        for _ in range(EMPLOYEE_NUMBER):
+            if self.target.has_parent:
+                employees.append(self.target(*target_args, counter, self, **kwgs))
+            else:
+                employees.append(self.target(*target_args, counter, **kwgs))
+            counter += 1
 
         self.employees = employees
 

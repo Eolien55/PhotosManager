@@ -6,8 +6,9 @@ class BaseEmployee(BaseProcess):
     has_parent = True
 
     def __init__(self, *args, **kwgs):
-        self.parent = args[0]
-        super().__init__(*args[1:], **kwgs)
+        self.process_id = args[0]
+        args = args[1:]
+        super().__init__(*args, **kwgs)
 
 
 class AnyEmployee(BaseEmployee):

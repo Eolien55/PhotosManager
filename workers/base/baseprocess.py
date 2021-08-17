@@ -56,7 +56,7 @@ class BaseProcess(mp.Process):
         try:
             while True:
                 self.queue.get_nowait()
-        except Exception:
+        except Empty:
             pass
 
         if hasattr(self, "after_loop"):
