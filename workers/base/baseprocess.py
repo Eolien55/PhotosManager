@@ -48,9 +48,7 @@ class BaseProcess(mp.Process):
 
         while True:
             msg = self.queue.get()
-            event, _ = msg
-            if event == "END":
-                del event, _
+            if msg[0] == "END":
                 break
             self.dispatch(msg)
         try:

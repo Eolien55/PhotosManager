@@ -9,6 +9,8 @@ import hachoir.parser
 
 
 def lonlat(gps):
+    if not tuple(filter(lambda x: "GPS" in x, gps)):
+        return "Ville inconnue", "Pays inconnu"
     results = []
     for i in ["GPSLongitude", "GPSLatitude"]:
         ref = gps[i + "Ref"]
@@ -72,20 +74,27 @@ def lonlat_to_city_country(lon, lat):
 
 def exif_to_city_country(exif: dict):
     gps_exif = {k.split(":")[-1]: v for k, v in exif.items() if "EXIF:" in k}
-    lon, lat = lonlat(gps_exif)
-    city, country = lonlat_to_city_country(lon, lat)
+    try:
+        lon, lat = lonlat(gps_exif)
+        city, country = lonlat_to_city_country(lon, lat)
+    except Exception as e:
+        print(e)
+        city, country = "Ville inconnue", "Pay inconnu"
 
     return city, country
 
 
-def photo_employee_job(root, filename: str, get_exif: FunctionType):
+def photo_employee_job(root, filename: str, get_exif: FunctionType, process_id):
     format = filename.split(".")[-1]
     if format.upper() not in authorized_formats:
         return
+    print("Getting exif")
     exif = get_exif(filename)
+    print("Getting hachoir data")
     with hachoir.parser.createParser(filename) as parser:
         metadata = hachoir.metadata.extractMetadata(parser)
         metadata = metadata.exportDictionary(human=False)
+    print("got exif data")
     DateTime = metadata["Metadata"]["creation_date"]
     year = DateTime[:4]
     month = months[DateTime[5:7]]
@@ -93,6 +102,25 @@ def photo_employee_job(root, filename: str, get_exif: FunctionType):
         city, country = exif_to_city_country(exif)
     else:
         city, country = "Ville inconnue", "Pays inconnu"
+
+    if not os.path.exists(
+        os.path.join(
+            root,
+            country,
+            city,
+            year,
+            month,
+        )
+    ):
+        os.makedirs(
+            os.path.join(
+                root,
+                country,
+                city,
+                year,
+                month,
+            )
+        )
 
     shutil.move(
         filename,
@@ -102,16 +130,21 @@ def photo_employee_job(root, filename: str, get_exif: FunctionType):
             city,
             year,
             month,
-            """{}-{}{}""".format(
+            """{}-{}{}{}""".format(
                 DateTime[:10],
                 len(
-                    os.listdir(
-                        lambda file: re.match(
-                            r"^{}-[0-9]+\..+$".format(DateTime[:10]), file
-                        ),
-                        map(os.path.join(root, country, city, year, month)),
+                    list(
+                        map(
+                            lambda file: re.match(
+                                r"^{}-[0-9]+\..+$".format(DateTime[:10]), file
+                            ),
+                            os.listdir(
+                                os.path.join(root, country, city, year, month),
+                            ),
+                        )
                     )
                 ),
+                " (" + str(process_id) + ")",
                 "." + format,
             ),
         ),

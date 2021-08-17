@@ -30,7 +30,6 @@ class PhotoEmployee(BaseEmployee):
 
     def before_loop(self):
         self.exif_employee = ExifEmployee()
-        self.exif_employee.start()
 
     def after_loop(self):
         self.exif_employee.end()
@@ -57,7 +56,7 @@ class CleanEmployee(BaseEmployee):
             filename,
             join(
                 self.root,
-                self.process_id,
+                str(self.process_id),
                 str(len(listdir(join(self.root, str(self.process_id)))) + 1),
             )
             + (
