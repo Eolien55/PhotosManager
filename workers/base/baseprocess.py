@@ -1,5 +1,6 @@
 import multiprocessing as mp
 from collections import namedtuple
+from queue import Empty
 
 
 Msg = namedtuple("Msg", ["event", "args"])
@@ -13,8 +14,12 @@ class BaseProcess(mp.Process):
     """A process backed by an internal queue for one-way message passing"""
 
     name = "Process"
+    has_parent = False
 
     def __init__(self, *args, **kwgs):
+        if self.has_parent:
+            self.parent = args[0]
+            args = args[1:]
         super().__init__(*args, **kwgs)
 
         self._start = super().start

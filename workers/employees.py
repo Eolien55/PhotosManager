@@ -26,8 +26,8 @@ class PhotoEmployee(BaseEmployee):
     def __init__(self, process_id, root, *args, **kwgs):
         super().__init__(*args, **kwgs)
 
-        self.process_id = process_id
         self.root = root
+        self.process_id = process_id
 
     def before_loop(self):
         self.exif_employee = ExifEmployee()
