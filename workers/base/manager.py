@@ -1,14 +1,17 @@
-from .baseprocess import BaseProcess
+from .baseprocess import Base
 from .employee import AnyEmployee
-from multiprocessing import Queue
+from time import sleep
 
 EMPLOYEE_NUMBER = 2
+
+BaseProcess = Base["Process"]
 
 
 class BaseManager(BaseProcess):
     name = "Manager"
     target = AnyEmployee
     target_args = 0
+    secretary = None
 
     def __init__(self, *args, **kwgs):
         target_args = args[: self.target_args]
@@ -26,6 +29,15 @@ class BaseManager(BaseProcess):
             counter += 1
 
         self.employees = employees
+        if self.muted:
+            for employee in self.employees:
+                employee.muted = True
+
+        if self.secretary:
+            if self.secretary.has_parent:
+                self.secretary = self.secretary(*target_args, self, **kwgs)
+            else:
+                self.secretary = self.secretary(*target_args, **kwgs)
 
     def start_employees(self):
         """Start every employee"""
@@ -35,6 +47,8 @@ class BaseManager(BaseProcess):
 
     def before_start(self):
         self.start_employees()
+        if self.secretary:
+            self.secretary.start()
 
     def least_used(self):
         """Find employee with the smallest queue and give him the job"""
@@ -48,3 +62,6 @@ class BaseManager(BaseProcess):
     def after_loop(self):
         # Sending all employees message to stop their job
         self.send_all("END")
+
+        if self.secretary:
+            self.secretary.send("END")

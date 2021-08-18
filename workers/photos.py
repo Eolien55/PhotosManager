@@ -78,7 +78,7 @@ def exif_to_city_country(exif: dict):
         lon, lat = lonlat(gps_exif)
         city, country = lonlat_to_city_country(lon, lat)
     except Exception as e:
-        print(e)
+
         city, country = "Ville inconnue", "Pay inconnu"
 
     return city, country
@@ -88,13 +88,10 @@ def photo_employee_job(root, filename: str, get_exif: FunctionType, process_id):
     format = filename.split(".")[-1]
     if format.upper() not in authorized_formats:
         return
-    print("Getting exif")
     exif = get_exif(filename)
-    print("Getting hachoir data")
     with hachoir.parser.createParser(filename) as parser:
         metadata = hachoir.metadata.extractMetadata(parser)
         metadata = metadata.exportDictionary(human=False)
-    print("got exif data")
     DateTime = metadata["Metadata"]["creation_date"]
     year = DateTime[:4]
     month = months[DateTime[5:7]]

@@ -1,6 +1,6 @@
 import os
-from .workers.managers import CleanManager
 from sys import argv
+from workers import CleanManager
 
 
 def main_clean(root):
@@ -9,7 +9,6 @@ def main_clean(root):
     for dirpath, _, files in os.walk(root):
         for file in files:
             manager.send("new_file", os.path.join(os.path.abspath(dirpath), file))
-    manager.send("END")
     manager.join()
     print("Done cleaning!")
 

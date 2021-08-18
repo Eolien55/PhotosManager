@@ -1,9 +1,9 @@
-from ..photos import photo_employee_job
+from .photos import photo_employee_job
 import exiftool
 from os.path import join, basename, exists
 from shutil import move
 from os import listdir, makedirs
-from .base.employee import BaseEmployee
+from .base import BaseEmployee
 
 
 class ExifEmployee:
@@ -39,6 +39,7 @@ class PhotoEmployee(BaseEmployee):
 
     def handle_new_file(self, filename):
         photo_employee_job(self.root, filename, self.get_exif, self.process_id)
+        self.parent.send("done_file")
 
 
 class CleanEmployee(BaseEmployee):
@@ -65,3 +66,4 @@ class CleanEmployee(BaseEmployee):
                 else ""
             ),
         )
+        self.parent.send("done_file")
