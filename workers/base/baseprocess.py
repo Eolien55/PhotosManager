@@ -14,16 +14,19 @@ class BaseThing:
         pass
 
     def __getitem__(self, item: str):
-        if item.upper() == "THREAD":
-            parent_class = th.Thread
-        elif item.upper() == "PROCESS":
-            parent_class = mp.Process
-        else:
-            raise NotImplementedError(
-                "I don't know what '{}' means, and at this point, i'm too afraid to ask".format(
-                    item
+        if isinstance(item, str):
+            if item.upper() == "THREAD":
+                parent_class = th.Thread
+            elif item.upper() == "PROCESS":
+                parent_class = mp.Process
+            else:
+                raise NotImplementedError(
+                    "I don't know what '{}' means, and at this point, i'm too afraid to ask".format(
+                        item
+                    )
                 )
-            )
+        else:
+            parent_class = item
 
         class BaseWorker:
             pass

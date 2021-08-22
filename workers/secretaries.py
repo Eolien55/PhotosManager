@@ -1,5 +1,5 @@
 from .base import BaseSecretary
-from .countfiles import countfiles
+from .helpers import countfiles
 from os import get_terminal_size
 
 
