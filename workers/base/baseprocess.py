@@ -5,6 +5,8 @@ from queue import Empty
 import sys
 import os
 
+mp.freeze_support()
+
 
 Msg = namedtuple("Msg", ["event", "args"])
 

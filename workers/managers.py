@@ -24,7 +24,8 @@ class CleanManager(BaseManager):
     name = "CleanManager"
     target = CleanEmployee
     target_args = 1
-    # muted = True
+    secretary = FilesSecretary
+    muted = True
 
     def handle_new_file(self, filename):
         least_used = self.least_used()
@@ -32,4 +33,4 @@ class CleanManager(BaseManager):
         least_used.send("new_file", filename)
 
     def handle_done_file(self):
-        pass
+        self.secretary.send("done_file")

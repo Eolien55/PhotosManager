@@ -10,6 +10,7 @@ def main_clean(root):
         for file in files:
             manager.send("new_file", os.path.join(os.path.abspath(dirpath), file))
     manager.join()
+    print("\n\n")
     print("Done cleaning!")
 
 

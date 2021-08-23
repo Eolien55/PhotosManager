@@ -1,8 +1,31 @@
 import gi
+from main.main_sort import main
 
 gi.require_version("Gtk", "3.0")
 
-from gi.repository import Gtk, GLib
+from gi.repository import Gtk
+
+
+class AskYesNo(Gtk.Dialog):
+    def __init__(self, parent):
+        super().__init__(title="ATTENTION", transient_for=parent, flags=0)
+
+        self.add_buttons(
+            Gtk.STOCK_NO,
+            False,
+            Gtk.STOCK_YES,
+            True,
+        )
+
+        self.set_default_size(150, 100)
+
+        label = Gtk.Label(
+            label="Cela détruira tous les fichiers qui ne sont pas des images. Voules-vous trier les photos de ce dossier ?"
+        )
+
+        box = self.get_content_area()
+        box.add(label)
+        self.show_all()
 
 
 def choose_file(*args):
@@ -28,7 +51,15 @@ def choose_file(*args):
 
 
 def run(*args):
-    pass
+    dialog = AskYesNo(window)
+    response = dialog.run()
+    dialog.destroy()
+
+    if response:
+        global root
+
+        root = input_file.get_text()
+        Gtk.main_quit()
 
 
 def show(title: str, text) -> None:
@@ -57,17 +88,14 @@ window.set_resizable(False)
 box = Gtk.Box(spacing=5, orientation=Gtk.Orientation.VERTICAL)
 input_file = Gtk.Entry()
 button_files = Gtk.Button(label="Sélectionner un dossier")
-files_label = Gtk.Label(label="0/0")
 button_run = Gtk.Button(label="Démarrer")
 
 input_file.set_halign(Gtk.Align.CENTER)
 button_files.set_halign(Gtk.Align.CENTER)
-files_label.set_halign(Gtk.Align.CENTER)
 button_run.set_halign(Gtk.Align.CENTER)
 
 box.pack_start(input_file, False, False, 0)
 box.pack_start(button_files, False, False, 0)
-box.pack_start(files_label, False, False, 0)
 box.pack_start(button_run, False, False, 0)
 
 window.add(box)
@@ -79,3 +107,5 @@ window.connect("delete-event", Gtk.main_quit)
 window.show_all()
 
 Gtk.main()
+
+main(root)
