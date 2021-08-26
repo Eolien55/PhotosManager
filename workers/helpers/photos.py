@@ -1,11 +1,13 @@
 import shutil
 import os
+from time import sleep, time
 from types import FunctionType
 import requests
 import json
 import re
 import hachoir.metadata
 import hachoir.parser
+from multiprocessing import _LockType
 
 
 def lonlat(gps):
@@ -84,7 +86,7 @@ def exif_to_city_country(exif: dict):
     return city, country
 
 
-def photo_employee_job(root, filename: str, get_exif: FunctionType, process_id):
+def photo_employee_job(root, filename: str, get_exif: FunctionType, process_id, lock: _LockType):
     format = filename.split(".")[-1]
     if format.upper() not in authorized_formats:
         return
@@ -95,10 +97,15 @@ def photo_employee_job(root, filename: str, get_exif: FunctionType, process_id):
     DateTime = metadata["Metadata"]["creation_date"]
     year = DateTime[:4]
     month = months[DateTime[5:7]]
+    lock.acquire()
+    started = time()
     if exif and bool(filter(lambda x: "GPS" in x.upper(), exif)):
         city, country = exif_to_city_country(exif)
     else:
         city, country = "Ville inconnue", "Pays inconnu"
+
+    sleep(1.5 - (started - time()))
+    lock.release()
 
     if not os.path.exists(
         os.path.join(

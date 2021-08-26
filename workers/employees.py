@@ -23,10 +23,11 @@ class ExifEmployee:
 class PhotoEmployee(BaseEmployee):
     name = "PhotoEmployee"
 
-    def __init__(self, root, *args, **kwgs):
+    def __init__(self, root, lock, *args, **kwgs):
         super().__init__(*args, **kwgs)
 
         self.root = root
+        self.lock = lock
 
     def before_loop(self):
         self.exif_employee = ExifEmployee()
@@ -38,7 +39,9 @@ class PhotoEmployee(BaseEmployee):
         return self.exif_employee.get_metadata(filename)
 
     def handle_new_file(self, filename):
-        photo_employee_job(self.root, filename, self.get_exif, self.process_id)
+        photo_employee_job(
+            self.root, filename, self.get_exif, self.process_id, self.lock
+        )
         self.parent.send("done_file")
 
 

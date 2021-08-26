@@ -4,6 +4,7 @@ from os.path import join, abspath, abspath
 from workers import PhotosManager
 from clean import main_clean
 from sys import argv
+from multiprocessing import Lock
 
 
 def clear():
@@ -19,7 +20,8 @@ def clear():
 
 def main(root):
     main_clean(root)
-    manager = PhotosManager(root)
+    lock = Lock()
+    manager = PhotosManager(root, lock)
     manager.start()
     for dirname, _, files in walk(root):
         for file in files:

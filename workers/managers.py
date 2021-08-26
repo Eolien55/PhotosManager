@@ -7,7 +7,7 @@ class PhotosManager(BaseManager):
     # Auto processed parameters
     name = "PhotosManager"
     target = PhotoEmployee
-    target_args = 1
+    target_args = 2
     muted = True
     secretary = FilesSecretary
 
