@@ -5,7 +5,6 @@ from workers import PhotosManager
 from clean import main_clean
 from sys import argv
 from multiprocessing import Lock
-import time
 
 
 def clear():
@@ -27,7 +26,6 @@ def main(root):
     for dirname, _, files in walk(root):
         for file in files:
             manager.send("new_file", join(abspath(dirname), file))
-    time.sleep(5)
     manager.join()
     clear()
     print("Done!")

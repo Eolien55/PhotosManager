@@ -4,13 +4,23 @@ from os.path import join, basename, exists
 from shutil import move
 from os import listdir, makedirs
 from .base import BaseEmployee
+from functools import lru_cache
 
+@lru_cache(1)
+def get_exif_tool_path():
+    if exists("./exiftool"):
+        return "./exiftool"
+    elif exists("./exiftool.exe"):
+        return "./exiftool.exe"
+    else:
+        return None
 
 class ExifEmployee:
     name = "ExifEmployee"
 
     def __init__(self):
-        self.et = exiftool.ExifTool()
+        print(get_exif_tool_path())
+        self.et = exiftool.ExifTool(get_exif_tool_path())
         self.et.__enter__()
 
     def end(self):

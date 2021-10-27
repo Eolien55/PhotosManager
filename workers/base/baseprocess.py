@@ -41,7 +41,6 @@ class BaseThing:
             muted = False
 
             def __init__(self, *args, **kwgs):
-                print(args, kwgs)
                 if self.has_parent:
                     self.parent = args[0]
                     args = args[1:]
