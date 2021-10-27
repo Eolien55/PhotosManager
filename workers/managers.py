@@ -8,6 +8,7 @@ class PhotosManager(BaseManager):
     name = "PhotosManager"
     target = PhotoEmployee
     target_args = 2
+    secretary_args = -1
     muted = True
     secretary = FilesSecretary
 

@@ -1,8 +1,8 @@
 from .baseprocess import Base
 
-BaseThread = Base["Thread"]
+BaseProcess = Base["Process"]
 
 
-class BaseSecretary(BaseThread):
+class BaseSecretary(BaseProcess):
     name = "BaseSecretary"
     has_parent = True
