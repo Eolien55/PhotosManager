@@ -10,8 +10,9 @@ class FilesSecretary(BaseSecretary):
         self.files_to_do = countfiles(root)
         if not self.files_to_do:
             self.files_to_do = 1
-
             self.files_done = 1
+            self.parent.send("END")
+            self.send("END")
         else:
             self.files_done = 0
 
