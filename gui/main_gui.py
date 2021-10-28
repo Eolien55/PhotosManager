@@ -1,5 +1,6 @@
 import gi
-from main.main_sort import main
+from main.relmain_sort import main
+import os
 
 gi.require_version("Gtk", "3.0")
 
@@ -59,7 +60,12 @@ def run(*args):
         global root
 
         root = input_file.get_text()
+
         Gtk.main_quit()
+
+        if not os.path.exists(root):
+            print("Erreur, le dossier n'existe pas !")
+            exit(1)
 
 
 def show(title: str, text) -> None:
@@ -108,4 +114,4 @@ window.show_all()
 
 Gtk.main()
 
-main(root)
+#main(root)
