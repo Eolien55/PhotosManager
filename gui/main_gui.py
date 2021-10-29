@@ -114,4 +114,4 @@ window.show_all()
 
 Gtk.main()
 
-#main(root)
+main(root)
